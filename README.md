@@ -10,7 +10,7 @@ The notes can be found here: http://people.eecs.berkeley.edu/~wkahan/Math128/Cub
 The quadratic equation solved is Ax<sup>2</sup> + Bx + C = 0.
 The cubic equation solved is Ax<sup>3</sup> + Bx<sup>2</sup> + Cx + D = 0.
 
-getQuadraticRoots(A, B, C)
+- getQuadraticRoots(A, B, C)
   - returns 4 real numbers: A1, B1, A2, B2
   - this corresponds to the (possibly) complex roots A1 + B1 * i and A2 + B2 * i.
 - getCubicRoots(A, B, C, D)

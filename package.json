@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^3.5.0"
+  },
+  "name": "cubic-roots",
+  "description": "Implementation of Kahan's cubic root finder.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "./node_modules/.bin/mocha ./test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tab58/cubic-roots.git"
+  },
+  "keywords": [
+    "cubic",
+    "equation",
+    "roots"
+  ],
+  "author": "Tim Bright",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tab58/cubic-roots/issues"
+  },
+  "homepage": "https://github.com/tab58/cubic-roots#readme"
+}

@@ -3,6 +3,28 @@
 const _Math = Math;
 const EPS = Math.pow(2, -52);
 
+const makeRoot = (x, y) => {
+  return {
+    real: x,
+    imag: y
+  };
+};
+
+const getDistinctRoots = (roots) => {
+  const uniqueRoots = [];
+  const TOL = 1e-14;
+  roots.forEach(root => {
+    const isNotUnique = uniqueRoots.reduce((acc, curRoot) => {
+      return acc || (_Math.abs(curRoot.real - root.real) < TOL &&
+        _Math.abs(curRoot.imag - root.imag) < TOL);
+    }, false);
+    if (!isNotUnique) {
+      uniqueRoots.push(root);
+    }
+  });
+  return uniqueRoots;
+};
+
 function disc (A, B, C) {
   let a = A;
   let b = B;
@@ -88,50 +110,19 @@ function qdrtc (A, B, C) {
       X2 = r / A;
     }
   }
-  return {
-    A1: X1,
-    B1: Y1,
-    A2: X2,
-    B2: Y2
-  };
+  return [
+    makeRoot(X1, Y1),
+    makeRoot(X2, Y2)
+  ];
 }
 
-function complexNorm (X, Y) {
-  const a = X;
-  const b = Y;
-  if (a === 0 && b === 0) {
-    return 0;
-  }
-  const x = _Math.abs(a);
-  const y = _Math.abs(b);
-  const u = _Math.max(x, y);
-  const t = _Math.min(x, y) / u;
-  return u * u * (1 + t * t);
-}
-
-// function reval (X, Y, A, B, C, D, eps = 2 * EPS, del = EPS) {
-//   let e = _Math.abs(A) * eps / (eps + del);
-//   const absZ = complexNorm(X, Y);
-//   const q1x = A * X + B;
-//   const q1y = A * Y + B;
-//   const absQ1 = complexNorm(q1x, q1y);
-//   e = absZ * e + absQ1;
-//   const q2x = q1x * X + C;
-//   const q2y = q1y * Y + C;
-//   const absQ2 = complexNorm(q2x, q2y);
-//   e = absZ * e + absQ2;
-//   const Qx = q2x * X + D;
-//   const Qy = q2y * Y + D;
-//   const absQ = complexNorm(Qx, Qy);
-//   const delta = (eps + del) * absZ * e + absQ * del;
-//   return delta;
-// }
-
-module.exports = {
+const Roots = {
   getQuadraticRoots: function (A, B, C) {
+    // method based on Kahan's notes "To Solve a Real Cubic Equation"
     return qdrtc(A, B, C);
   },
   getCubicRoots: function (A, B, C, D) {
+    // method based on Kahan's notes "To Solve a Real Cubic Equation"
     let X;
     let a;
     let b1;
@@ -180,7 +171,69 @@ module.exports = {
         }
       }
     }
-    const { A1, B1, A2, B2 } = qdrtc(a, b1, c2);
-    return { A0: X, A1, B1, A2, B2 };
+    const roots = [];
+    if (X !== undefined) {
+      roots.push(makeRoot(X, 0));
+    }
+    const quadInfo = qdrtc(a, b1, c2);
+    return roots.concat(quadInfo);
+  },
+  getQuarticRoots: function (a, b, c, d, e) {
+    // See link for method:
+    // https://math.stackexchange.com/questions/785/is-there-a-general-formula-for-solving-4th-degree-equations-quartic
+    if (a === 0) {
+      return Roots.getCubicRoots(b, c, d, e);
+    }
+    // compute the "depressed" quartic via the substitution x = z - (b / 4a):
+    //    az^4 + Bz^2 + Cz + D = 0
+    //    B, C, D are reals
+    const B = c - (3 * b * b) / (8 * a);
+    const C = d - (b * c) / (2 * a) + (b * b * b) / (8 * a * a);
+    const D = e - (b * d) / (4 * a) + (b * b * c) / (16 * a * a) - (3 * b * b * b * b) / (256 * a * a * a);
+    // compute the "depressed" monic quartic:
+    //    z^4 + pz^2 + qz + r = 0
+    //    p, q, r are reals
+    const p = B / a;
+    const q = C / a;
+    const r = D / a;
+    // Since p, q, r, are reals, Descartes Factorization:
+    //    (z^2 + mz + n)(z^2 + sz + t) = 0
+    //     m, n, s, t are reals
+    // Solving for constants yields:
+    //    (z^2 + mz + n)(z^2 - mz + (r/n)) = 0
+    // We also get:
+    //    m^6 + 2pm^4 + (p^2 - 4r)m^2 - q^2 = 0
+    // Substitute w = m^2:
+    //    w^3 + 2pw^2 + (p^2 - 4r)w - q^2 = 0
+    // If m is real, then w must be real and w >= 0.
+    // For t to be real, then w > 0.
+    const ws = Roots.getCubicRoots(1, 2 * p, p * p - 4 * r, -q * q)
+      .filter(root => root.imag === 0)
+      .map(root => root.real)
+      .filter(w => w > 0);
+
+    const zCoeffs = [];
+    ws.forEach(w => {
+      const m0 = Math.sqrt(w);
+      const m1 = -m0;
+      const n = 0.5 * (p + w);
+      const n0 = n - q / (2 * m0);
+      const n1 = n - q / (2 * m1);
+      zCoeffs.push({ m: m0, n: n0 });
+      zCoeffs.push({ m: m1, n: n1 });
+    });
+    const zs = [];
+    zCoeffs.forEach(zCoeff => {
+      const { m, n } = zCoeff;
+      const quadInfo1 = Roots.getQuadraticRoots(1, m, n);
+      zs.push.apply(zs, quadInfo1);
+      const quadInfo2 = Roots.getQuadraticRoots(1, -m, r / n);
+      zs.push.apply(zs, quadInfo2);
+    });
+    const uniqueZ = getDistinctRoots(zs);
+    uniqueZ.forEach(z => { z.real += -b / (4 * a); });
+    return uniqueZ;
   }
 };
+
+module.exports = Roots;

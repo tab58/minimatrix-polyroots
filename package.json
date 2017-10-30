@@ -3,9 +3,9 @@
     "chai": "^4.1.2",
     "mocha": "^3.5.0"
   },
-  "name": "cubic-roots",
-  "description": "Implementation of Kahan's cubic root finder.",
-  "version": "2.0.0",
+  "name": "minimatrix-polyroots",
+  "description": "Implementation of Kahan's polynomial root finders for polynomials up to degree 4.",
+  "version": "2.0.1",
   "main": "index.js",
   "devDependencies": {},
   "scripts": {

@@ -1,19 +1,19 @@
 {
-  "dependencies": {
+  "dependencies": {},
+  "name": "minimatrix-polyroots",
+  "description": "Implementation of Kahan's polynomial root finders for polynomials up to degree 4.",
+  "version": "2.0.2",
+  "main": "index.js",
+  "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^3.5.0"
   },
-  "name": "minimatrix-polyroots",
-  "description": "Implementation of Kahan's polynomial root finders for polynomials up to degree 4.",
-  "version": "2.0.1",
-  "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "./node_modules/.bin/mocha ./test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tab58/cubic-roots.git"
+    "url": "git+https://github.com/tab58/minimatrix-polyroots.git"
   },
   "keywords": [
     "cubic",
@@ -23,7 +23,7 @@
   "author": "Tim Bright",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tab58/cubic-roots/issues"
+    "url": "https://github.com/tab58/minimatrix-polyroots/issues"
   },
-  "homepage": "https://github.com/tab58/cubic-roots#readme"
+  "homepage": "https://github.com/tab58/minimatrix-polyroots#readme"
 }

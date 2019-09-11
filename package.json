@@ -2,7 +2,7 @@
   "dependencies": {},
   "name": "minimatrix-polyroots",
   "description": "Implementation of Kahan's polynomial root finders for polynomials up to degree 4.",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "main": "index.js",
   "devDependencies": {
     "chai": "^4.2.0",

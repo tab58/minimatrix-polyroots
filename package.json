@@ -5,8 +5,8 @@
   "version": "2.0.2",
   "main": "index.js",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^3.5.0"
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha ./test.js"

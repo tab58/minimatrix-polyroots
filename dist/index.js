@@ -9,7 +9,6 @@ var Root = (function () {
     }
     return Root;
 }());
-exports.Root = Root;
 var getDistinctRoots = function (roots, TOL) {
     if (TOL === void 0) { TOL = 1e-14; }
     var uniqueRoots = [];

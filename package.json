@@ -1,7 +1,7 @@
 {
   "name": "minimatrix-polyroots",
   "description": "Implementation of Kahan's polynomial root finders for polynomials up to degree 4.",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "main": "dist/index.js",
   "dependencies": {
     "typescript": "^3.6.3"

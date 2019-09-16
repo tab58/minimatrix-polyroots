@@ -3,13 +3,8 @@
 const _Math = Math;
 const EPS = Math.pow(2, -52);
 
-interface Complex {
-  real: number;
-  imag: number;
-}
-
 /** Represents a root for the equation. */
-class Root implements Complex {
+class Root {
   public real: number;
   public imag: number;
 
@@ -137,7 +132,7 @@ function qdrtc (A: number, B: number, C: number): Root[] {
 /**
  * Solves the linear equation Ax + B = 0 for x.
  */
-export const getLinearRoot = function (A: number, B: number): Complex[] {
+export const getLinearRoot = function (A: number, B: number): { real: number; imag: number }[] {
   // P(x) = A*x + B
   if (A !== 0) {
     return [new Root(-B / A, 0)];
@@ -149,7 +144,7 @@ export const getLinearRoot = function (A: number, B: number): Complex[] {
 /**
  * Solves the linear equation Ax^2 + Bx + C = 0 for x.
  */
-export const getQuadraticRoots = function (A: number, B: number, C: number): Complex[] {
+export const getQuadraticRoots = function (A: number, B: number, C: number): { real: number; imag: number }[] {
   // method based on Kahan's notes "To Solve a Real Cubic Equation"
   return qdrtc(A, B, C);
 };
@@ -157,7 +152,7 @@ export const getQuadraticRoots = function (A: number, B: number, C: number): Com
 /**
  * Solves the linear equation Ax^3 + Bx^2 + Cx + D = 0 for x.
  */
-export const getCubicRoots = function (A: number, B: number, C: number, D: number): Complex[] {
+export const getCubicRoots = function (A: number, B: number, C: number, D: number): { real: number; imag: number }[] {
   // method based on Kahan's notes "To Solve a Real Cubic Equation"
   let X: number;
   let a: number;
@@ -218,7 +213,7 @@ export const getCubicRoots = function (A: number, B: number, C: number, D: numbe
 /**
  * Solves the linear equation Ax^4 + Bx^3 + Cx^2 + Dx + E = 0 for x.
  */
-export const getQuarticRoots = function (a: number, b: number, c: number, d: number, e: number): Complex[] {
+export const getQuarticRoots = function (a: number, b: number, c: number, d: number, e: number): { real: number; imag: number }[] {
   // See link for method:
   // https://math.stackexchange.com/questions/785/is-there-a-general-formula-for-solving-4th-degree-equations-quartic
   if (a === 0) {

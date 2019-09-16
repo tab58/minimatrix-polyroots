@@ -3,16 +3,24 @@
 const _Math = Math;
 const EPS = Math.pow(2, -52);
 
-const makeRoot = (x, y) => {
-  return {
-    real: x,
-    imag: y
-  };
-};
+/** Represents a root for the equation. */
+export class Root {
+  public real: number;
+  public imag: number;
 
-const getDistinctRoots = (roots) => {
-  const uniqueRoots = [];
-  const TOL = 1e-14;
+  public constructor (x: number, y: number) {
+    this.real = x;
+    this.imag = y;
+  }  
+}
+
+/**
+ * Gets only the distinct roots from the root array.
+ * @param roots The root array.
+ * @param TOL The tolerance that determines if 2 roots are the same or not.
+ */
+const getDistinctRoots = (roots: Root[], TOL = 1e-14): Root[] => {
+  const uniqueRoots: Root[] = [];
   roots.forEach(root => {
     const isNotUnique = uniqueRoots.reduce((acc, curRoot) => {
       return acc || (_Math.abs(curRoot.real - root.real) < TOL &&
@@ -25,7 +33,10 @@ const getDistinctRoots = (roots) => {
   return uniqueRoots;
 };
 
-function disc (A, B, C) {
+/**
+ * Calculates the discriminant of Ax^2 + Bx + C = 0.
+ */
+function disc (A: number, B: number, C: number): number {
   let a = A;
   let b = B;
   let c = C;
@@ -63,7 +74,8 @@ function disc (A, B, C) {
   return b * b - a * c;
 }
 
-function nearestInt (n) {
+/** Calculates the nearest integer to a number. */
+function nearestInt (n: number): number {
   const l = _Math.floor(n);
   const h = _Math.ceil(n);
   const dl = Math.abs(n - l);
@@ -71,7 +83,7 @@ function nearestInt (n) {
   return (dl > dh ? dh : dl);
 }
 
-function evaluate (x, A, B, C, D) {
+function evaluate (x: number, A: number, B: number, C: number, D: number): { Q: number; dQ: number; B1: number; C2: number } {
   const q0 = A * x;
   const B1 = q0 + B;
   const C2 = B1 * x + C;
@@ -83,7 +95,8 @@ function evaluate (x, A, B, C, D) {
   };
 }
 
-function qdrtc (A, B, C) {
+/** Computes the roots of the quadratic Ax^2 + Bx + C = 0. */
+function qdrtc (A: number, B: number, C: number): Root[] {
   const b = -B / 2;
   const q = disc(A, b, C);
   let X1 = 0;
@@ -111,31 +124,40 @@ function qdrtc (A, B, C) {
     }
   }
   return [
-    makeRoot(X1, Y1),
-    makeRoot(X2, Y2)
+    new Root(X1, Y1),
+    new Root(X2, Y2)
   ];
 }
 
-const getLinearRoot = function (A, B) {
+/**
+ * Solves the linear equation Ax + B = 0 for x.
+ */
+export const getLinearRoot = function (A: number, B: number) {
   // P(x) = A*x + B
   if (A !== 0) {
-    return [makeRoot(-B / A, 0)];
+    return [new Root(-B / A, 0)];
   } else {
     return [];
   }
 };
 
-const getQuadraticRoots = function (A, B, C) {
+/**
+ * Solves the linear equation Ax^2 + Bx + C = 0 for x.
+ */
+export const getQuadraticRoots = function (A: number, B: number, C: number): Root[] {
   // method based on Kahan's notes "To Solve a Real Cubic Equation"
   return qdrtc(A, B, C);
 };
 
-const getCubicRoots = function (A, B, C, D) {
+/**
+ * Solves the linear equation Ax^3 + Bx^2 + Cx + D = 0 for x.
+ */
+export const getCubicRoots = function (A: number, B: number, C: number, D: number): Root[] {
   // method based on Kahan's notes "To Solve a Real Cubic Equation"
-  let X;
-  let a;
-  let b1;
-  let c2;
+  let X: number;
+  let a: number;
+  let b1: number;
+  let c2: number;
   if (A === 0) {
     X = undefined;
     a = B;
@@ -180,15 +202,18 @@ const getCubicRoots = function (A, B, C, D) {
       }
     }
   }
-  const roots = [];
+  const roots: Root[] = [];
   if (X !== undefined) {
-    roots.push(makeRoot(X, 0));
+    roots.push(new Root(X, 0));
   }
   const quadInfo = qdrtc(a, b1, c2);
   return roots.concat(quadInfo);
 };
 
-const getQuarticRoots = function (a, b, c, d, e) {
+/**
+ * Solves the linear equation Ax^4 + Bx^3 + Cx^2 + Dx + E = 0 for x.
+ */
+export const getQuarticRoots = function (a: number, b: number, c: number, d: number, e: number): Root[] {
   // See link for method:
   // https://math.stackexchange.com/questions/785/is-there-a-general-formula-for-solving-4th-degree-equations-quartic
   if (a === 0) {
@@ -222,32 +247,25 @@ const getQuarticRoots = function (a, b, c, d, e) {
     .map(root => root.real)
     .filter(w => w > 0);
 
-  const zCoeffs = [];
-  ws.forEach(w => {
+  const zCoeffs = ws.reduce((acc: { m: number; n: number }[], w: number): { m: number; n: number }[] => {
     const m0 = Math.sqrt(w);
     const m1 = -m0;
     const n = 0.5 * (p + w);
     const n0 = n - q / (2 * m0);
     const n1 = n - q / (2 * m1);
-    zCoeffs.push({ m: m0, n: n0 });
-    zCoeffs.push({ m: m1, n: n1 });
-  });
-  const zs = [];
-  zCoeffs.forEach(zCoeff => {
+    acc.push({ m: m0, n: n0 });
+    acc.push({ m: m1, n: n1 });
+    return acc;
+  }, []);
+  const zs = zCoeffs.reduce((acc: Root[], zCoeff: { m: number; n: number }): Root[] => {
     const { m, n } = zCoeff;
     const quadInfo1 = getQuadraticRoots(1, m, n);
-    zs.push.apply(zs, quadInfo1);
+    acc.push(...quadInfo1);
     const quadInfo2 = getQuadraticRoots(1, -m, r / n);
-    zs.push.apply(zs, quadInfo2);
-  });
+    acc.push(...quadInfo2);
+    return acc;
+  }, []);
   const uniqueZ = getDistinctRoots(zs);
   uniqueZ.forEach(z => { z.real += -b / (4 * a); });
   return uniqueZ;
-};
-
-module.exports = {
-  getLinearRoot,
-  getQuadraticRoots,
-  getCubicRoots,
-  getQuarticRoots
 };

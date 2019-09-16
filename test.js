@@ -1,7 +1,7 @@
 'use strict';
 /* global describe it */
 
-const Roots = require('./index.js');
+const Roots = require('./dist/index.js');
 const expect = require('chai').expect;
 const assert = require('chai').assert;
 const DEFAULT_PRECISION = 1e-14;

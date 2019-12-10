@@ -126,7 +126,6 @@ exports.getCubicRoots = function (A, B, C, D) {
     var b1;
     var c2;
     if (A === 0) {
-        X = undefined;
         a = B;
         b1 = C;
         c2 = D;

@@ -159,7 +159,6 @@ export const getCubicRoots = function (A: number, B: number, C: number, D: numbe
   let b1: number;
   let c2: number;
   if (A === 0) {
-    X = undefined;
     a = B;
     b1 = C;
     c2 = D;

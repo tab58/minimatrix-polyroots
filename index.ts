@@ -158,6 +158,7 @@ export const getCubicRoots = function (A: number, B: number, C: number, D: numbe
   let a: number;
   let b1: number;
   let c2: number;
+  const roots: Root[] = [];
   if (A === 0) {
     a = B;
     b1 = C;
@@ -167,6 +168,7 @@ export const getCubicRoots = function (A: number, B: number, C: number, D: numbe
     a = A;
     b1 = B;
     c2 = C;
+    roots.push(new Root(X, 0));
   } else {
     a = A;
     X = -(B / A) / 3;
@@ -200,9 +202,6 @@ export const getCubicRoots = function (A: number, B: number, C: number, D: numbe
         b1 = (c2 - C) / X;
       }
     }
-  }
-  const roots: Root[] = [];
-  if (X !== undefined) {
     roots.push(new Root(X, 0));
   }
   const quadInfo = qdrtc(a, b1, c2);

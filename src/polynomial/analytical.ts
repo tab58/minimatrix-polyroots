@@ -8,10 +8,10 @@ class Root {
   public real: number;
   public imag: number;
 
-  public constructor (x: number, y: number) {
+  public constructor(x: number, y: number) {
     this.real = x;
     this.imag = y;
-  }  
+  }
 }
 
 /**
@@ -23,8 +23,7 @@ const getDistinctRoots = (roots: Root[], TOL = 1e-14): Root[] => {
   const uniqueRoots: Root[] = [];
   roots.forEach(root => {
     const isNotUnique = uniqueRoots.reduce((acc, curRoot) => {
-      return acc || (_Math.abs(curRoot.real - root.real) < TOL &&
-        _Math.abs(curRoot.imag - root.imag) < TOL);
+      return acc || (_Math.abs(curRoot.real - root.real) < TOL && _Math.abs(curRoot.imag - root.imag) < TOL);
     }, false);
     if (!isNotUnique) {
       uniqueRoots.push(root);
@@ -36,14 +35,13 @@ const getDistinctRoots = (roots: Root[], TOL = 1e-14): Root[] => {
 /**
  * Calculates the discriminant of Ax^2 + Bx + C = 0.
  */
-function disc (A: number, B: number, C: number): number {
+function disc(A: number, B: number, C: number): number {
   let a = A;
   let b = B;
   let c = C;
 
-  const isIntCoeffs = _Math.abs(_Math.floor(A) - A) === 0 &&
-    _Math.abs(_Math.floor(b) - b) === 0 &&
-    _Math.abs(_Math.floor(C) - C) === 0;
+  const isIntCoeffs =
+    _Math.abs(_Math.floor(A) - A) === 0 && _Math.abs(_Math.floor(b) - b) === 0 && _Math.abs(_Math.floor(C) - C) === 0;
 
   if (isIntCoeffs) {
     if (a * c > 0) {
@@ -75,15 +73,21 @@ function disc (A: number, B: number, C: number): number {
 }
 
 /** Calculates the nearest integer to a number. */
-function nearestInt (n: number): number {
+function nearestInt(n: number): number {
   const l = _Math.floor(n);
   const h = _Math.ceil(n);
   const dl = Math.abs(n - l);
   const dh = Math.abs(n - h);
-  return (dl > dh ? dh : dl);
+  return dl > dh ? dh : dl;
 }
 
-function evaluate (x: number, A: number, B: number, C: number, D: number): { Q: number; dQ: number; B1: number; C2: number } {
+function evaluate(
+  x: number,
+  A: number,
+  B: number,
+  C: number,
+  D: number,
+): { Q: number; dQ: number; B1: number; C2: number } {
   const q0 = A * x;
   const B1 = q0 + B;
   const C2 = B1 * x + C;
@@ -91,12 +95,12 @@ function evaluate (x: number, A: number, B: number, C: number, D: number): { Q: 
     Q: C2 * x + D,
     dQ: (q0 + B1) * x + C2,
     B1,
-    C2
+    C2,
   };
 }
 
 /** Computes the roots of the quadratic Ax^2 + Bx + C = 0. */
-function qdrtc (A: number, B: number, C: number): Root[] {
+function qdrtc(A: number, B: number, C: number): Root[] {
   const b = -B / 2;
   const q = disc(A, b, C);
   let X1 = 0;
@@ -123,16 +127,13 @@ function qdrtc (A: number, B: number, C: number): Root[] {
       X2 = r / A;
     }
   }
-  return [
-    new Root(X1, Y1),
-    new Root(X2, Y2)
-  ];
+  return [new Root(X1, Y1), new Root(X2, Y2)];
 }
 
 /**
  * Solves the linear equation Ax + B = 0 for x.
  */
-export const getLinearRoot = function (A: number, B: number): { real: number; imag: number }[] {
+export const getLinearRoot = function(A: number, B: number): { real: number; imag: number }[] {
   // P(x) = A*x + B
   if (A !== 0) {
     return [new Root(-B / A, 0)];
@@ -144,7 +145,7 @@ export const getLinearRoot = function (A: number, B: number): { real: number; im
 /**
  * Solves the linear equation Ax^2 + Bx + C = 0 for x.
  */
-export const getQuadraticRoots = function (A: number, B: number, C: number): { real: number; imag: number }[] {
+export const getQuadraticRoots = function(A: number, B: number, C: number): { real: number; imag: number }[] {
   // method based on Kahan's notes "To Solve a Real Cubic Equation"
   return qdrtc(A, B, C);
 };
@@ -152,7 +153,7 @@ export const getQuadraticRoots = function (A: number, B: number, C: number): { r
 /**
  * Solves the linear equation Ax^3 + Bx^2 + Cx + D = 0 for x.
  */
-export const getCubicRoots = function (A: number, B: number, C: number, D: number): { real: number; imag: number }[] {
+export const getCubicRoots = function(A: number, B: number, C: number, D: number): { real: number; imag: number }[] {
   // method based on Kahan's notes "To Solve a Real Cubic Equation"
   let X: number;
   let a: number;
@@ -187,7 +188,7 @@ export const getCubicRoots = function (A: number, B: number, C: number, D: numbe
     }
     let x0 = X - s * r;
     if (x0 !== X) {
-      const den = 1 + (100 * EPS);
+      const den = 1 + 100 * EPS;
       do {
         X = x0;
         evalInfo = evaluate(X, A, B, C, D);
@@ -195,7 +196,7 @@ export const getCubicRoots = function (A: number, B: number, C: number, D: numbe
         dq = evalInfo.dQ;
         b1 = evalInfo.B1;
         c2 = evalInfo.C2;
-        x0 = (dq === 0 ? X : X - (q / dq) / den);
+        x0 = dq === 0 ? X : X - q / dq / den;
       } while (s * x0 > s * X);
       if (_Math.abs(A) * X * X > _Math.abs(D / X)) {
         c2 = -D / X;
@@ -211,7 +212,13 @@ export const getCubicRoots = function (A: number, B: number, C: number, D: numbe
 /**
  * Solves the linear equation Ax^4 + Bx^3 + Cx^2 + Dx + E = 0 for x.
  */
-export const getQuarticRoots = function (a: number, b: number, c: number, d: number, e: number): { real: number; imag: number }[] {
+export const getQuarticRoots = function(
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number,
+): { real: number; imag: number }[] {
   // See link for method:
   // https://math.stackexchange.com/questions/785/is-there-a-general-formula-for-solving-4th-degree-equations-quartic
   if (a === 0) {
@@ -264,6 +271,8 @@ export const getQuarticRoots = function (a: number, b: number, c: number, d: num
     return acc;
   }, []);
   const uniqueZ = getDistinctRoots(zs);
-  uniqueZ.forEach(z => { z.real += -b / (4 * a); });
+  uniqueZ.forEach(z => {
+    z.real += -b / (4 * a);
+  });
   return uniqueZ;
 };

@@ -1,18 +1,22 @@
 {
   "name": "minimatrix-polyroots",
   "description": "Implementation of Kahan's polynomial root finders for polynomials up to degree 4.",
-  "version": "3.0.5",
+  "version": "4.0.0",
   "main": "dist/index.js",
   "dependencies": {
+    "minimatrix": "^5.0.0",
+    "synthetic-division": "^2.0.0",
     "typescript": "^3.7.3"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.8",
+    "@types/mocha": "^7.0.1",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
     "ts-node": "^8.5.4"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -r ts-node/register ./test.js",
+    "test": "./node_modules/.bin/mocha -r ts-node/register ./test/*.spec.ts",
     "build": "./node_modules/.bin/tsc"
   },
   "repository": {
